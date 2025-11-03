@@ -13,6 +13,11 @@
                 <strong>{{ review.user.username }}</strong> — 
                 {{ review.room.hotel.name }} — {{ review.room.room_type }} — 
                 <span class="badge bg-info text-dark">{{ review.rating }}/10</span>
+                {% if review.stay_start and review.stay_end %}
+                    <p><strong>Период проживания:</strong> 
+                       {{ review.stay_start|date:"d.m.Y" }} — {{ review.stay_end|date:"d.m.Y" }}
+                    </p>
+                {% endif %}
                 <p class="mt-2 mb-0">{{ review.comment }}</p>
             </li>
         {% empty %}
