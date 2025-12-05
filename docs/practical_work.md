@@ -13,8 +13,11 @@
     ![object](images/object.png)
     Предупреждение появляется, потому что я не вводила время, а ограничилась только датой. На работу это никак не повлияло кроме такого предупреждения.
     Полный список всех созданных объектов:
+
     **Владельцы:**
-   ```python
+
+```python
+   
     owner1 = Owner.objects.create(
         last_name="Иванов",
         first_name="Иван",
@@ -56,9 +59,13 @@
         first_name="Сергей",
         birth_date="1980-12-05"
     )
-    ```
+   
+```
+   
    **Автомобили:**
-   ```python
+
+```python
+   
     car1 = Car.objects.create(
         license_plate="А123БВ777",
         brand="Toyota",
@@ -100,9 +107,13 @@
         model="Polo",
         color="Зеленый"
     )
-    ```
+   
+```
+   
    И **водительское удостоверение** для каждого водителя:
-    ```python
+
+```python
+   
     DriverLicense.objects.create(
         owner=owner1,
         license_number="1234567890",
@@ -151,9 +162,11 @@
         license_type="BCDE",
         issue_date="2005-08-12"
     )
-   ```
+```
+   
 4. Далее связываю автомобили с владельцами через модель Ownership
-    ```python
+
+```python
     # Владелец 1 получает 2 автомобиля
     Ownership.objects.create(
         owner=owner1,
@@ -258,9 +271,11 @@
         start_date="2024-01-20",
         end_date=None
     )
-   ```
-   5. После проверяю все получившиеся данные:
-   ```markdown
+```
+   
+5. После проверяю все получившиеся данные:
+
+```markdown
     Владельцев создано: 9
     Автомобилей создано: 10
     Удостоверений создано: 7
@@ -414,7 +429,8 @@
         Номер удостоверения: 7890123456
         Категория: BCDE
         Дата выдачи: 2005-08-12 00:00:00+00:00
-   ```
+```
+   
 ### Практическое задание 2
 По созданным в пр.1 данным написать следующие запросы на фильтрацию:
 
@@ -431,23 +447,30 @@
     ![migrations](images/migrations.png)
 3. И теперь снова можно переходить в Python Console и выполнять запросы. Далее я буду оформлять их дополнительными выводами через print, чтобы было точно понятно что конкретно выводит данный запрос
 4. Вывести все машины марки "Toyota":
-   ```python
+
+```python
     toyota_cars = Car.objects.filter(brand="Toyota")
     print(Все машины Toyota")
     for car in toyota_cars:
         print(f"- {car.brand} {car.model} ({car.license_plate}), цвет: {car.color}")
-    ```
-    ![toyota](images/toyota.png)
+```
+   
+![toyota](images/toyota.png)
+
 5. Найти всех водителей с именем "Анна":
-    ```python
+
+```python
     anna_owners = Owner.objects.filter(first_name="Анна")
     print("Все водители с именем Анна")
     for owner in anna_owners:
         print(f"- {owner.last_name} {owner.first_name}, дата рождения: {owner.birth_date}")
-    ```
+```
+   
    ![anna](images/anna.png)
+
 6. Взять случайного владельца и получить его удостоверение:
-    ```python
+
+```python
     import random    
     # Первый запрос - получаем ID случайного владельца
     owner_ids = Owner.objects.values_list('id', flat=True)
@@ -462,10 +485,13 @@
             print(f"Владелец: {license_by_id.owner.last_name} {license_by_id.owner.first_name}")
         except DriverLicense.DoesNotExist:
             print(f"У владельца с ID {random_id} нет удостоверения")
-    ```
+```
+   
    ![random](images/random.png)
+
 7. Вывести всех владельцев красных машин
-    ```python
+
+```python
     print("Владельцы красных машин")
     
     # Сначала находим все красные машины
@@ -485,17 +511,20 @@
                 print(f"- {ownership.owner.last_name} {ownership.owner.first_name} (владел с {ownership.start_date} по {ownership.end_date or 'настоящее время'})")
         else:
             print("Нет записей о владении")
-    ```
-   ![red](images/red.png)
+```
+   
+![red](images/red.png)
+
 8. Найти всех владельцев, чей год владения машиной начинается с 2020
-    ```python
+```python
     owners_since_2020 = Owner.objects.filter(
         ownerships__start_date__year__gte=2020 
     ).distinct()
     print("Владельцы, которые владели машинами с 2020 года:")
     for owner in owners_since_2020:
         print(f"- {owner.last_name} {owner.first_name}")
-   ```
+```
+   
    ![2020](images/2020.png)
 
 ### Практическое задание 3
@@ -508,15 +537,20 @@
 
 Выполнение:
 1. Самая старая дата выдачи водительского удостоверения:
-    ```python
+
+```python
+   
     oldest_license_date = DriverLicense.objects.aggregate(
         oldest_date=Min('issue_date')
     )
     print(f"Самая старая дата выдачи: {oldest_license_date['oldest_date']}")
-    ```
+```
+   
    ![old](images/old.png)
+
 2. Самая поздняя дата владения машиной для каждой модели
-    ```python
+
+```python
     latest_ownership_by_model = Ownership.objects.values(
         'car__model'
     ).annotate(
@@ -527,10 +561,13 @@
     print("-" * 40)
     for item in latest_ownership_by_model:
         print(f"{item['car__model']} | {item['latest_date'].date()}")
-    ```
+```
+   
    ![olddate](images/olddate.png)
+
 3. Количество машин для каждого водителя
-    ```python
+
+```python
     owners_with_car_count = Owner.objects.annotate(
         car_count=Count('ownerships')
     ).order_by('-car_count')
@@ -539,10 +576,13 @@
     print("-" * 40)
     for owner in owners_with_car_count:
         print(f"{owner.last_name} {owner.first_name} | {owner.car_count}")
-    ```
+```
+   
    ![count](images/count.png)
+
 4. Количество машин каждой марки
-    ```python
+
+```python
     cars_by_brand = Car.objects.values('brand').annotate(
         count=Count('id')
     ).order_by('-count')
@@ -551,10 +591,13 @@
     print("-" * 40)
     for item in cars_by_brand:
         print(f"{item['brand']} | {item['count']}")
-    ```
+```
+   
    ![brandcount](images/brandcount.png)
+
 5. Сортировка владельцев по дате выдачи удостоверения
-   ```python
+
+```python
    owners_sorted_by_license = Owner.objects.filter(
        licenses__isnull=False
    ).annotate(
@@ -566,5 +609,6 @@
    for owner in owners_sorted_by_license:
        license = owner.licenses.order_by('issue_date').first()
        print(f"{owner.first_name} {owner.last_name} | {license.issue_date.date()}")
-   ```
+```
+   
    ![license](images/license.png)
