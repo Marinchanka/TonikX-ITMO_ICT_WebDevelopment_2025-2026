@@ -8,6 +8,9 @@ nav:
       - Задание 4: task4.md
       - Задание 5: task5.md
   - Лабораторная работа №2: lab2.md
+  - Лабораторная работа №3:
+      - practical_work.md
+      - lab3.md
 
 theme:
   name: material
